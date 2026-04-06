@@ -5,7 +5,7 @@ class OCDrawMapType extends eZDataType
     const DATA_TYPE_STRING = 'ocdrawmap';
 
     const DEFAULT_SUBATTRIBUTE_TYPE = 'location_rpt';
-
+    
     const FIELD_TYPE_MAP = 'rpt';
 
     function __construct()
@@ -42,7 +42,7 @@ class OCDrawMapType extends eZDataType
      * @return string
      */
     function objectAttributeContent($contentObjectAttribute)
-    {
+    {        
         $content = array(
             'type' => '',
             'color' => '',
@@ -70,9 +70,9 @@ class OCDrawMapType extends eZDataType
         if( trim($contentObjectAttribute->attribute('data_text')) != ''){
             $data = $contentObjectAttribute->attribute('data_text');
             $content = json_decode($data, 1);
-            $geoJson = isset($content['geo_json']) ? json_decode($content['geo_json'], 1) : [];
+            $geoJson = json_decode($content['geo_json'], 1);
 
-            return isset($geoJson['features']) && count($geoJson['features']) > 0;
+            return count($geoJson['features']) > 0;
         }
 
         return false;
@@ -118,13 +118,13 @@ class OCDrawMapType extends eZDataType
         foreach ($json['features'] as $feature) {
             $geometry = $feature['geometry'];
             switch ($geometry['type']) {
-                case 'MultiPolygon':
+                case 'MultiPolygon':                    
                     foreach ($geometry['coordinates'] as $polygonWrapper) {
-                        foreach ($polygonWrapper as $polygon) {
+                        foreach ($polygonWrapper as $polygon) {                            
                             $polygonCoordinates = array();
                             foreach ($polygon as $coordinates) {
                                 $polygonCoordinates[] = $coordinates[1] . ' ' . $coordinates[0];
-                            }
+                            }                        
                             $data[] = "POLYGON((" . implode(', ', $polygonCoordinates) . "))";
                         }
                     }
@@ -135,7 +135,7 @@ class OCDrawMapType extends eZDataType
                         $polygonCoordinates = array();
                         foreach ($polygon as $coordinates) {
                             $polygonCoordinates[] = $coordinates[1] . ' ' . $coordinates[0];
-                        }
+                        }                        
                         $data[] = "POLYGON((" . implode(', ', $polygonCoordinates) . "))";
                     }
                     break;
@@ -143,10 +143,10 @@ class OCDrawMapType extends eZDataType
                 case 'LineString':
                     foreach ($geometry['coordinates'] as $point) {
                         if (isset($point[1]) && count($point) == 2 && is_numeric($point[1])){
-                            $data[] = $point[1] . ' ' . $point[0];
+                            $data[] = $point[1] . ' ' . $point[0];              
                         }else{
-                            foreach ($point as $coordinates) {
-                                $data[] = $coordinates[1] . ' ' . $coordinates[0];
+                            foreach ($point as $coordinates) {                                
+                                $data[] = $coordinates[1] . ' ' . $coordinates[0];              
                             }
                         }
                     }
@@ -154,14 +154,14 @@ class OCDrawMapType extends eZDataType
 
                 case 'Point':
                     if (isset($geometry['properties']['radius'])){
-                        $data[] = "Circle(" . $geometry['coordinates'][1] . ' ' . $geometry['coordinates'][0] . " d=" . $geometry['properties']['radius'] . ")";
+                        $data[] = "Circle(" . $geometry['coordinates'][1] . ' ' . $geometry['coordinates'][0] . " d=" . $geometry['properties']['radius'] . ")";   
                     }else{
-                        $data[] = $geometry['coordinates'][1] . ' ' . $geometry['coordinates'][0];
+                        $data[] = $geometry['coordinates'][1] . ' ' . $geometry['coordinates'][0];   
                     }
                     break;
-
+                
                 default:
-
+                    
                     break;
             }
         }
