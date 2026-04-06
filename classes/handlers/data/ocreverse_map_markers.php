@@ -47,7 +47,6 @@ class DataHandlerOCReverseMapMarkers implements OpenPADataHandlerInterface
   {
 
     extract( $args );
-    // @phpstan-ignore variable.undefined
     $content = self::find( $query, $attribute, $classIdentifier );
 
     return array(
@@ -95,7 +94,6 @@ class DataHandlerOCReverseMapMarkers implements OpenPADataHandlerInterface
 
   protected static function find( $query, $attribute, $classIdentifier)
   {
-    // @phpstan-ignore class.notFound
     $featureData = new DataHandlerTnFamMapMarkersGeoJsonFeatureCollection();
     $language    = eZLocale::currentLocaleCode();
 
@@ -151,11 +149,9 @@ class DataHandlerOCReverseMapMarkers implements OpenPADataHandlerInterface
 
   public function getData()
   {
-    // @phpstan-ignore return.missing
     if ($this->contentType == 'geojson') {
       $featureData = new OCMapMarkersGeoJsonFeatureCollection();
 
-      // @phpstan-ignore return.missing
       if (eZHTTPTool::instance()->hasGetVariable('classIdentifier') && eZHTTPTool::instance()->hasGetVariable('attribute')) {
 
         $this->classIdentifier = eZHTTPTool::instance()->getVariable('classIdentifier');

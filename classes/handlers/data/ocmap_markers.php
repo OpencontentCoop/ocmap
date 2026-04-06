@@ -47,7 +47,6 @@ class DataHandlerOCMapMarkers implements OpenPADataHandlerInterface
   {
 
     extract($args);
-    // @phpstan-ignore variable.undefined
     $content = self::find($query, $attributes);
 
     return array(
